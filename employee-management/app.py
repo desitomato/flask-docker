@@ -1,14 +1,20 @@
+import os
 from flask import Flask, request, jsonify
 from flask_restful import Api
 from resources.company import Company, Companylist
 from resources.employee import Employee, EmployeeList
+from db import db
 from resources.user import UserRegister, UserLogin, UserLogout
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'prateek'
 api = Api(app)
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 api.add_resource(Company, '/company/<string:name>')
 api.add_resource(Companylist, '/company')
@@ -19,9 +25,8 @@ api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout/<string:username>')
 
 if __name__ == '__main__':
-    from db import db
     db.init_app(app)
-    app.run(port=5000, debug=True)
+    app.run()
 
 
 
