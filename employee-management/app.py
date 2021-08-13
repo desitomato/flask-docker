@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_restful import Api
 from resources.company import Company, Companylist
 from resources.employee import Employee, EmployeeList
-from db import db
+
 from resources.user import UserRegister, UserLogin, UserLogout
 
 app = Flask(__name__)
@@ -25,6 +25,7 @@ api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout/<string:username>')
 
 if __name__ == '__main__':
+    from db import db
     db.init_app(app)
     app.run()
 
